@@ -5,4 +5,6 @@ const getAll = () => {
   return connection.execute(query);
 };
 
-module.exports = getAll;
+module.exports = {
+  getAll,
+};
