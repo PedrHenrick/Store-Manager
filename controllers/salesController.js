@@ -1,18 +1,15 @@
-const express = require('express');
 const salesService = require('../services/salesService');
 
-const router = express.Router();
-
-router.get('/', async (_req, res) => {
+const getAll = async (_req, res) => {
   try {
     const sales = await salesService.get();
     res.status(200).json(sales);
   } catch (err) {
     res.status(500).json({ Error: 'Erro interno' });
   }
-});
+};
 
-router.get('/:id', async (req, res) => {
+const getById = async (req, res) => {
   try {
     const { id } = req.params;
     const sale = await salesService.get(id);
@@ -22,6 +19,9 @@ router.get('/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ Error: 'Erro interno' });
   }
-});
+};
 
-module.exports = router;
+module.exports = {
+  getAll,
+  getById,
+};
