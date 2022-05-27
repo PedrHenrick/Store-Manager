@@ -1,34 +1,91 @@
-const app = require('../../../app');
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const expect = chai.expect;
+const { expect } = require('chai');
+const sinon = require('sinon');
 
-chai.use(chaiHttp);
+const productController = require('../../../controllers/productController')
+const productService = require('../../../services/productService')
+const { productsAll, productId } = require('../mocks');
 
 describe('Testando rotas /products', () => {
+  const request = {};
+  const response = {};
 
   describe('verifica /GET products', async () => {
-    it('Testando se em caso de sucesso retorna um status 200', async () => {
-        const res = await chai.request(app).get('/products');
+    before(() => {
+      response.status = sinon.stub().returns(response);
+      response.json = sinon.stub().returns();
 
-        expect(res.statusCode).to.be.equal(200);
-        expect(res.body).to.be.a('array');
+      sinon.stub(productService, 'get').resolves(productsAll);
+    })
+
+    after(() => {
+      productService.get.restore();
+    });
+
+    it('Testando se em caso de sucesso retorna um status 200', async () => {
+        await productController.getAll(request, response);
+
+        expect(response.status.calledWith(200)).to.be.equal(true);
+    });
+
+    it('Testando se em caso de sucesso retorna um array', async () => {
+      await productController.getAll(request, response);
+
+      expect(response.json.calledWith(sinon.match.array)).to.be.equal(true);
     });
   });
 
   describe('verifica /GET:id products', async () => {
-    it('Testando se em caso de sucesso retorna um status 200', async () => {
-        const res = await chai.request(app).get('/products/1');
-        
-        expect(res.statusCode).to.be.equal(200);
-        expect(res.body).to.be.a('object');
+    describe('Em caso de sucesso', async () => {
+      before(() => {
+        request.params = { id: 1 }
+
+        response.status = sinon.stub().returns(response);
+        response.json = sinon.stub().returns();
+  
+        sinon.stub(productService, 'get').resolves(productId);
+      })
+  
+      after(() => {
+        productService.get.restore();
+      });
+  
+      it('Testando se em caso de sucesso retorna um status 200', async () => {
+          await productController.getById(request, response);
+  
+          expect(response.status.calledWith(200)).to.be.equal(true);
+      });
+  
+      it('Testando se em caso de sucesso retorna um object', async () => {
+        await productController.getById(request, response);
+  
+        expect(response.json.calledWith(sinon.match.object)).to.be.equal(true);
+      });
     });
 
-    it('Testando se em caso de falha retorna um status 404 e a mensagem "Product not found"', async () => {
-      const res = await chai.request(app).get('/products/5000');
-      
-      expect(res.statusCode).to.be.equal(404);
-      expect(res.text).to.be.equal('{"message":"Product not found"}')
+    describe('Em caso de falha', async () => {    
+      before(() => {  
+        request.params = { id: 9999 }
+
+        response.status = sinon.stub().returns(response);
+        response.json = sinon.stub().returns();
+  
+        sinon.stub(productService, 'get').resolves(undefined);
+      })
+  
+      after(() => {
+        productService.get.restore();
+      });
+  
+      it('Testando se em caso de sucesso retorna um status 404', async () => {
+          await productController.getById(request, response);
+          expect(response.status.calledWith(404)).to.be.equal(true);
+      });
+  
+      it('Testando se em caso de sucesso retorna um array', async () => {
+        await productController.getById(request, response);
+  
+        expect(response.json.calledWith({ message: "Product not found" })).to.be.equal(true);
+      });
     });
   });
 })
