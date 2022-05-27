@@ -3,29 +3,12 @@ const sinon = require('sinon');
 
 const productModel = require('../../../models/productModel');
 const productService = require('../../../services/productService');
+const { productsAll, productId } = require('../mocks');
 
 describe('Testando service da rota product', () => {
   describe('Testando get-All', () => {
-    before(async () => {
-      const result = [[
-        {
-            "id": 1,
-            "name": "Martelo de Thor",
-            "quantity": 10
-        },
-        {
-            "id": 2,
-            "name": "Traje de encolhimento",
-            "quantity": 20
-        },
-        {
-            "id": 3,
-            "name": "Escudo do Capitão América",
-            "quantity": 30
-        }
-    ]];
-  
-      sinon.stub(productModel, 'getAll').resolves(result);
+    before(async () => { 
+      sinon.stub(productModel, 'getAll').resolves([productsAll]);
     });
   
     after(async () => {
@@ -51,15 +34,7 @@ describe('Testando service da rota product', () => {
   describe('Testando get-Id', () => {
     describe('Em caso de sucesso', () => {
       before(async () => {
-        const result = [[
-          {
-              "id": 1,
-              "name": "Martelo de Thor",
-              "quantity": 10
-          },
-      ]];
-    
-        sinon.stub(productModel, 'getAll').resolves(result);
+        sinon.stub(productModel, 'getAll').resolves([[productId]]);
       });
     
       after(async () => {
@@ -85,9 +60,7 @@ describe('Testando service da rota product', () => {
 
     describe('Em caso de falha', () => {
       before(async () => {
-        const result = [[]];
-
-        sinon.stub(productModel, 'getAll').resolves(result);
+        sinon.stub(productModel, 'getAll').resolves([[]]);
       });
     
       after(async () => {

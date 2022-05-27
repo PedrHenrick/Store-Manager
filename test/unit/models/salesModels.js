@@ -3,32 +3,12 @@ const sinon = require('sinon');
 
 const connection = require('../../../database/connection');
 const salesModel = require('../../../models/salesModel');
+const { salesAll, saleId } = require('../mocks');
 
 describe('Testando model da rota sales', () => {
   describe('Testando função getAll', () => {
     before(async () => {
-      const result = [
-        {
-            "saleId": 1,
-            "date": "2022-05-26T21:09:36.000Z",
-            "productId": 1,
-            "quantity": 5
-        },
-        {
-            "saleId": 1,
-            "date": "2022-05-26T21:09:36.000Z",
-            "productId": 2,
-            "quantity": 10
-        },
-        {
-            "saleId": 2,
-            "date": "2022-05-26T21:09:36.000Z",
-            "productId": 3,
-            "quantity": 15
-        }
-    ];
-  
-      sinon.stub(connection, 'execute').resolves(result);
+      sinon.stub(connection, 'execute').resolves(salesAll);
     });
   
     after(async () => {
@@ -55,20 +35,7 @@ describe('Testando model da rota sales', () => {
   describe('Testando função getById', () => {
     describe('Em caso de sucesso', () => {
       before(async () => {
-        const result = [
-            {
-                "date": "2022-05-26T21:09:36.000Z",
-                "productId": 1,
-                "quantity": 5
-            },
-            {
-                "date": "2022-05-26T21:09:36.000Z",
-                "productId": 2,
-                "quantity": 10
-            }
-        ];
-    
-        sinon.stub(connection, 'execute').resolves(result);
+        sinon.stub(connection, 'execute').resolves(saleId);
       });
     
       after(async () => {
@@ -89,9 +56,7 @@ describe('Testando model da rota sales', () => {
 
     describe('Em caso de falha', () => {
       before(async () => {
-        const result = [];
-    
-        sinon.stub(connection, 'execute').resolves(result);
+        sinon.stub(connection, 'execute').resolves([]);
       });
     
       after(async () => {

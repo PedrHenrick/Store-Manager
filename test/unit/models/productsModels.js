@@ -3,29 +3,12 @@ const sinon = require('sinon');
 
 const connection = require('../../../database/connection');
 const productModel = require('../../../models/productModel');
+const { productsAll } = require('../mocks');
 
 describe('Testando model da rota product', () => {
   describe('Testando função getAll', () => {
-    before(async () => {
-      const result = [
-        {
-            "id": 1,
-            "name": "Martelo de Thor",
-            "quantity": 10
-        },
-        {
-            "id": 2,
-            "name": "Traje de encolhimento",
-            "quantity": 20
-        },
-        {
-            "id": 3,
-            "name": "Escudo do Capitão América",
-            "quantity": 30
-        }
-    ];
-  
-      sinon.stub(connection, 'execute').resolves(result);
+    before(async () => {  
+      sinon.stub(connection, 'execute').resolves(productsAll);
     });
   
     after(async () => {
