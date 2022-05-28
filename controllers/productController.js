@@ -22,7 +22,22 @@ const getById = async (req, res) => {
   }
 };
 
+const add = async (req, res) => {
+  try {
+    const newProduct = req.body;
+
+    const newPost = await productService.add(newProduct);
+    
+    if (!newPost) return res.status(409).json({ message: 'Product already exists' });
+    
+    return res.status(201).json(newPost);
+  } catch (err) {
+    return res.status(500).json({ Error: 'Erro interno' });
+  }
+};
+
 module.exports = {
   getAll,
   getById,
+  add,
 };
