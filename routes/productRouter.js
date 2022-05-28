@@ -9,5 +9,6 @@ productRouter.use(express.json());
 productRouter.get('/', productController.getAll);
 productRouter.get('/:id', productController.getById);
 productRouter.post('/', validateProduct, validateLengthProduct, productController.add);
+productRouter.put('/:id', validateProduct, validateLengthProduct, productController.update);
 
 module.exports = productRouter;
