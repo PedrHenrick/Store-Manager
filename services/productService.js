@@ -21,7 +21,19 @@ const add = async (newProduct) => {
   return undefined;
 };
 
+const update = async (id, newProduct) => {
+  const [rows] = await productModel.getAll();
+
+  const row = rows.find((product) => product.id === +id);
+
+  if (!row) {
+    return undefined;
+  }
+  return productModel.update(id, newProduct);
+};
+
 module.exports = {
   get,
   add,
+  update,
 };
