@@ -19,7 +19,17 @@ const getById = (id) => {
   return connection.execute(query, [id]);
 };
 
+const add = async () => {
+  const query = 'INSERT INTO sales (date) VALUES (NOW());';
+  const [rows] = await connection.execute(query);
+
+  return {
+    id: rows.insertId,
+  };
+};
+
 module.exports = {
   getAll,
   getById,
+  add,
 };
