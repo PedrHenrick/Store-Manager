@@ -1,12 +1,14 @@
 const salesService = require('../services/salesService');
 
+const error = { Error: 'Erro interno' };
+
 const getAll = async (_req, res) => {
   try {
     const sales = await salesService.get();
     
     return res.status(200).json(sales);
   } catch (err) {
-    return res.status(500).json({ Error: 'Erro interno' });
+    return res.status(500).json(error);
   }
 };
 
@@ -19,7 +21,7 @@ const getById = async (req, res) => {
     
     return res.status(200).json(sale);
   } catch (err) {
-    res.status(500).json({ Error: 'Erro interno' });
+    res.status(500).json(error);
   }
 };
 
@@ -34,7 +36,7 @@ const add = async (req, res) => {
     return res.status(201).json(sale);
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ Error: 'Erro interno' });
+    return res.status(500).json(error);
   }
 };
 
