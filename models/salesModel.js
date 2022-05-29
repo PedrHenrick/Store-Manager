@@ -9,6 +9,11 @@ const getAll = () => {
   return connection.execute(query);
 };
 
+const getAllSale = () => {
+  const query = 'SELECT * FROM sales;';
+  return connection.execute(query);
+};
+
 const getById = (id) => {
   const query = `SELECT s.date, sp.product_id as productId, sp.quantity
   FROM sales_products as sp
@@ -30,6 +35,7 @@ const add = async () => {
 
 module.exports = {
   getAll,
+  getAllSale,
   getById,
   add,
 };
