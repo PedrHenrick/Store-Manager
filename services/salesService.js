@@ -26,7 +26,26 @@ const add = async (sales) => {
   };
 };
 
+const update = async (id, sales) => {
+  const [rows] = await salesModel.getAllSale();
+
+  const verify = rows.find((row) => row.id === +id);
+
+  console.log(rows);
+
+  if (!verify) return undefined;
+
+  const editedSales = await Promise.all(sales
+  .map((sale) => salesProductsModel.update(id, sale)));
+  
+  return {
+    saleId: id,
+    itemUpdated: editedSales,
+  };
+};
+
 module.exports = {
   get,
   add,
+  update,
 };
