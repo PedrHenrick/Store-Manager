@@ -31,8 +31,6 @@ const update = async (id, sales) => {
 
   const verify = rows.find((row) => row.id === +id);
 
-  console.log(rows);
-
   if (!verify) return undefined;
 
   const editedSales = await Promise.all(sales
