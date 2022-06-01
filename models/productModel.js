@@ -9,7 +9,7 @@ const add = async ({ name, quantity }) => {
   const query = `INSERT INTO products (name, quantity)
   VALUES (?, ?)`;
   const [row] = await connection.execute(query, [name, quantity]);
-  console.log(row);
+
   return {
     id: row.insertId,
     name,
