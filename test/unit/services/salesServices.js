@@ -2,8 +2,9 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 
 const salesModel = require('../../../models/salesModel');
+const salesProductsModel = require('../../../models/salesProductsModel');
 const salesService = require('../../../services/salesService');
-const { salesAll, saleId } = require('../mocks');
+const { salesAll, saleId, newSale, responseSale, saleUpdated, allSales } = require('../mocks');
 
 describe('Testando service da rota sales', () => {
   describe('Testando get-All', () => {
@@ -34,7 +35,7 @@ describe('Testando service da rota sales', () => {
 
   describe('Testando get-Id', () => {
     describe('Em caso de sucesso', () => {
-      before(async () => {    
+      before(async () => {
         sinon.stub(salesModel, 'getById').resolves([saleId]);
       });
     
@@ -43,20 +44,18 @@ describe('Testando service da rota sales', () => {
       });
   
       it('Testando se em caso de sucesso recebe um objeto', async () => {
-        const id = 1;
-        const response = await salesService.get(id);
+        const response = await salesService.get(1);
 
         expect(response[0]).to.be.a('object');
       });
   
       it('Se tem as propriedades saleId, date, productId, quantity', async () => {
-        const response = await salesService.get();
-  
-        expect(response[0]).to.be.property('saleId');
+        const response = await salesService.get(1);
+
         expect(response[0]).to.be.property('date');
         expect(response[0]).to.be.property('productId');
         expect(response[0]).to.be.property('quantity');
-      })
+      });
     })
 
     describe('Em caso de falha', () => {
@@ -76,4 +75,74 @@ describe('Testando service da rota sales', () => {
       })
     })
   })
+  /// ADD
+  describe('Testando função add', () => {
+    describe('Se ao ser chamado com sucesso retorna um objeto', () => {
+      const id = { id: 1 };
+      before(async () => {
+        sinon.stub(salesModel, 'add').resolves(id);
+        sinon.stub(salesProductsModel, 'add').resolves(responseSale);
+      });
+    
+      after(async () => {
+        salesModel.add.restore();
+        salesProductsModel.add.restore();
+      });
+  
+      it('Testando se em caso de sucesso recebe um objeto', async () => {
+        const response = await salesService.add([newSale]);
+
+        expect(response).to.be.a('object');
+      });
+  
+      it('Se tem as propriedades id, name, quantity', async () => {
+        const response = await salesService.add([newSale]);
+
+        expect(response).to.be.property('id');
+        expect(response).to.be.property('itemsSold');
+      });
+    });
+  });
+  /// UPDATE
+  describe('Testando função update', () => {
+    describe('Se ao ser chamado com sucesso retorna um objeto', () => {
+      before(async () => {
+        sinon.stub(salesModel, 'getAllSale').resolves([allSales]);
+        sinon.stub(salesProductsModel, 'update').resolves(saleUpdated);
+      });
+
+      after(async () => {
+        salesModel.getAllSale.restore();
+        salesProductsModel.update.restore();
+      });
+  
+      it('Testando se em caso de sucesso recebe um objeto', async () => {
+        const response = await salesService.update(1, [newSale]);
+
+        expect(response).to.be.a('object');
+      });
+  
+      it('Se tem as propriedades id, name, quantity', async () => {
+        const response = await salesService.update(1, [newSale]);
+
+        expect(response).to.be.property('saleId');
+        expect(response).to.be.property('itemUpdated');
+      });
+    });
+    describe('Se ao ser chamado com erro retorna um undefined', () => {
+      before(async () => {
+        sinon.stub(salesModel, 'getAllSale').resolves([salesAll]);
+      });
+      
+      after(async () => {
+        salesModel.getAllSale.restore();
+      });
+      
+      it('Testando se em caso de sucesso recebe um objeto', async () => {
+        const response = await salesService.update(999, newSale);
+        
+        expect(response).to.be.a('undefined');
+      });
+    })
+  });
 })
