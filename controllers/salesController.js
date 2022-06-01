@@ -1,59 +1,37 @@
 const salesService = require('../services/salesService');
 
-const error = { Error: 'Erro interno' };
-
 const getAll = async (_req, res) => {
-  try {
-    const sales = await salesService.get();
-    
-    return res.status(200).json(sales);
-  } catch (err) {
-    return res.status(500).json(error);
-  }
+  const sales = await salesService.get();
+  
+  return res.status(200).json(sales);
 };
 
 const getById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const sale = await salesService.get(id);
+  const { id } = req.params;
+  const sale = await salesService.get(id);
 
-    if (!sale) return res.status(404).json({ message: 'Sale not found' });
-    
-    return res.status(200).json(sale);
-  } catch (err) {
-    res.status(500).json(error);
-  }
+  if (!sale) return res.status(404).json({ message: 'Sale not found' });
+  
+  return res.status(200).json(sale);
 };
 
 const add = async (req, res) => {
-  try {
-    const newSale = req.body;
+  const newSale = req.body;
 
-    const sale = await salesService.add(newSale);
-    
-    if (!sale) return res.status(502).json({ Error: 'Foi recebido valor inválido do servidor' });
+  const sale = await salesService.add(newSale);
 
-    return res.status(201).json(sale);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json(error);
-  }
+  return res.status(201).json(sale);
 };
 
 const update = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const editSale = req.body;
+  const { id } = req.params;
+  const editSale = req.body;
 
-    const sale = await salesService.update(id, editSale);
+  const sale = await salesService.update(id, editSale);
 
-    if (!sale) return res.status(404).json({ message: 'Sale not found' });
+  if (!sale) return res.status(404).json({ message: 'Sale not found' });
 
-    return res.status(200).json(sale);
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json(error);
-  }
+  return res.status(200).json(sale);
 };
 
 module.exports = {
