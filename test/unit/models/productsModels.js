@@ -6,7 +6,6 @@ const productModel = require('../../../models/productModel');
 const { productsAll, productObjectAdd, productResponseAddTrue } = require('../mocks');
 
 describe('Testando model da rota product', () => {
-  /// GETALL
   describe('Testando função getAll', () => {
     before(async () => {  
       sinon.stub(connection, 'execute').resolves(productsAll);
@@ -31,7 +30,6 @@ describe('Testando model da rota product', () => {
       expect(response[0]).to.be.property('quantity')
     })
   });
-  /// ADD
   describe('Testando função add', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       before(async () => {  
@@ -57,7 +55,6 @@ describe('Testando model da rota product', () => {
       })
     });
   });
-  /// UPDATE
   describe('Testando função update', () => {
     before(async () => {  
       sinon.stub(connection, 'execute').resolves(productResponseAddTrue);
@@ -81,7 +78,6 @@ describe('Testando model da rota product', () => {
       expect(response).to.be.property('quantity')
     })
   });
-  /// DELETE
   describe('Testando função delete', () => {
     before(async () => {  
       sinon.stub(connection, 'execute').resolves(productsAll);

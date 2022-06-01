@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const salesController = require('../../../controllers/salesController')
 const salesService = require('../../../services/salesService')
-const { salesAll, saleId, newSale, saleObjectAdd, responseSale, saleUpdated } = require('../mocks');
+const { salesAll, saleId, newSale, responseSale, saleUpdated } = require('../mocks');
 
 describe('Testando rotas /sales', () => {
   const request = {};
@@ -88,7 +88,6 @@ describe('Testando rotas /sales', () => {
       });
     });
   });
-  /// ADD
   describe('verifica /POST products', async () => {
     describe('Em caso de sucesso', () => {
       before(() => {
@@ -112,7 +111,6 @@ describe('Testando rotas /sales', () => {
       })
     });
   });
-  /// UPDATE
   describe('verifica /PUT products', async () => {
     describe('Em caso de sucesso', () => {
       before(() => {

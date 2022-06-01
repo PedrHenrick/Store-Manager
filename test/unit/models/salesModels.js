@@ -6,7 +6,6 @@ const salesModel = require('../../../models/salesModel');
 const { salesAll, saleId, saleObjectAdd, saleResponseAddTrue } = require('../mocks');
 
 describe('Testando model da rota sales', () => {
-  /// GETALL
   describe('Testando função getAll', () => {
     before(async () => {
       sinon.stub(connection, 'execute').resolves(salesAll);
@@ -32,7 +31,6 @@ describe('Testando model da rota sales', () => {
       expect(response[0]).to.be.property('quantity')
     })
   });
-  /// GETBYID
   describe('Testando função getById', () => {
     describe('Em caso de sucesso', () => {
       before(async () => {
@@ -73,7 +71,6 @@ describe('Testando model da rota sales', () => {
       })
     })
   })
-  /// ADD
   describe('Testando função add', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       before(async () => {  
@@ -97,7 +94,6 @@ describe('Testando model da rota sales', () => {
       })
     });
   });
-  /// GETALL SALE
   describe('Testando função getAllSale', () => {
     before(async () => {
       sinon.stub(connection, 'execute').resolves(saleResponseAddTrue);

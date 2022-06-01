@@ -75,7 +75,7 @@ describe('Testando service da rota product', () => {
       })
     })
   })
-  /// ADD
+  
   describe('Testando função add', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       before(async () => {
@@ -118,7 +118,6 @@ describe('Testando service da rota product', () => {
       });
     })
   });
-  /// UPDATE
   describe('Testando função update', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       before(async () => {
@@ -161,7 +160,6 @@ describe('Testando service da rota product', () => {
       });
     })
   });
-  /// DELETE
   describe('Testando função delete', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       before(async () => {

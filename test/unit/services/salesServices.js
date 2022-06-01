@@ -75,7 +75,6 @@ describe('Testando service da rota sales', () => {
       })
     })
   })
-  /// ADD
   describe('Testando função add', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       const id = { id: 1 };
@@ -103,7 +102,6 @@ describe('Testando service da rota sales', () => {
       });
     });
   });
-  /// UPDATE
   describe('Testando função update', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       before(async () => {

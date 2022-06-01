@@ -6,7 +6,6 @@ const salesProductsModels = require('../../../models/salesProductsModel');
 const { saleProductsResponseAddTrue, saleObjectAdd } = require('../mocks');
 
 describe('Testando model de sales_products', () => {
-  /// ADD
   describe('Testando função add', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       before(async () => {  
@@ -31,7 +30,6 @@ describe('Testando model de sales_products', () => {
       })
     });
   });
-  /// UPDATE
   describe('Testando função update', () => {
     before(async () => {  
       sinon.stub(connection, 'execute').resolves(saleProductsResponseAddTrue);

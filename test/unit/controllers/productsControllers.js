@@ -88,7 +88,6 @@ describe('Testando rotas /products', () => {
       });
     });
   });
-  /// ADD
   describe('verifica /POST products', async () => {
     describe('Em caso de sucesso', () => {
       before(() => {
@@ -133,7 +132,6 @@ describe('Testando rotas /products', () => {
       })
     });
   });
-  /// UPDATE
   describe('verifica /PUT products', async () => {
     describe('Em caso de sucesso', () => {
       before(() => {
@@ -180,7 +178,6 @@ describe('Testando rotas /products', () => {
       })
     });
   });
-  /// DELETE
   describe('verifica /DELETE products', async () => {
     describe('Em caso de sucesso', () => {
       before(() => {
