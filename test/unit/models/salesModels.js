@@ -3,9 +3,10 @@ const sinon = require('sinon');
 
 const connection = require('../../../database/connection');
 const salesModel = require('../../../models/salesModel');
-const { salesAll, saleId } = require('../mocks');
+const { salesAll, saleId, saleObjectAdd, saleResponseAddTrue } = require('../mocks');
 
 describe('Testando model da rota sales', () => {
+  /// GETALL
   describe('Testando função getAll', () => {
     before(async () => {
       sinon.stub(connection, 'execute').resolves(salesAll);
@@ -31,7 +32,7 @@ describe('Testando model da rota sales', () => {
       expect(response[0]).to.be.property('quantity')
     })
   });
-
+  /// GETBYID
   describe('Testando função getById', () => {
     describe('Em caso de sucesso', () => {
       before(async () => {
@@ -71,5 +72,53 @@ describe('Testando model da rota sales', () => {
         expect(response).to.be.empty;
       })
     })
+  })
+  /// ADD
+  describe('Testando função add', () => {
+    describe('Se ao ser chamado com sucesso retorna um objeto', () => {
+      before(async () => {  
+        sinon.stub(connection, 'execute').resolves(saleResponseAddTrue);
+      });
+      
+      after(async () => {
+        connection.execute.restore();
+      });
+    
+      it('Se é um objeto', async () => {
+        const response = await salesModel.add();
+
+        expect(response).to.be.a('object')
+      })
+    
+      it('Se tem a propriedade id', async () => {
+        const response = await salesModel.add();
+        
+        expect(response).to.be.property('id')
+      })
+    });
   });
-})
+  /// GETALL SALE
+  describe('Testando função getAllSale', () => {
+    before(async () => {
+      sinon.stub(connection, 'execute').resolves(saleResponseAddTrue);
+    });
+  
+    after(async () => {
+      connection.execute.restore();
+    });
+    
+    it('Se ao ser chamado retorna um array de objetos', async () => {
+      const response = await salesModel.getAllSale();
+
+      expect(response).to.be.a('array')
+      expect(response[0]).to.be.a('object')
+    })
+
+    it('Se tem as propriedades id, date', async () => {
+      const response = await salesModel.getAllSale();
+
+      expect(response[0]).to.be.property('id')
+      expect(response[0]).to.be.property('date')
+    })
+  });
+});
