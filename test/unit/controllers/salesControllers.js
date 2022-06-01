@@ -3,18 +3,18 @@ const sinon = require('sinon');
 
 const salesController = require('../../../controllers/salesController')
 const salesService = require('../../../services/salesService')
-const { productsAll, productId } = require('../mocks');
+const { salesAll, saleId, newSale, saleObjectAdd, responseSale, saleUpdated } = require('../mocks');
 
-describe('Testando rotas /products', () => {
+describe('Testando rotas /sales', () => {
   const request = {};
   const response = {};
 
-  describe('verifica /GET products', async () => {
+  describe('verifica /GET sales', async () => {
     before(() => {
       response.status = sinon.stub().returns(response);
       response.json = sinon.stub().returns();
 
-      sinon.stub(salesService, 'get').resolves(productsAll);
+      sinon.stub(salesService, 'get').resolves(salesAll);
     })
 
     after(() => {
@@ -34,7 +34,7 @@ describe('Testando rotas /products', () => {
     });
   });
 
-  describe('verifica /GET:id products', async () => {
+  describe('verifica /GET:id sale', async () => {
     describe('Em caso de sucesso', async () => {
       before(() => {
         request.params = { id: 1 }
@@ -42,7 +42,7 @@ describe('Testando rotas /products', () => {
         response.status = sinon.stub().returns(response);
         response.json = sinon.stub().returns();
   
-        sinon.stub(salesService, 'get').resolves(productId);
+        sinon.stub(salesService, 'get').resolves(saleId);
       })
   
       after(() => {
@@ -55,10 +55,10 @@ describe('Testando rotas /products', () => {
           expect(response.status.calledWith(200)).to.be.equal(true);
       });
   
-      it('Testando se em caso de sucesso retorna um object', async () => {
+      it('Testando se em caso de sucesso retorna um array', async () => {
         await salesController.getById(request, response);
   
-        expect(response.json.calledWith(sinon.match.object)).to.be.equal(true);
+        expect(response.json.calledWith(sinon.match.array)).to.be.equal(true);
       });
     });
 
@@ -86,6 +86,77 @@ describe('Testando rotas /products', () => {
   
         expect(response.json.calledWith({ message: "Sale not found" })).to.be.equal(true);
       });
+    });
+  });
+  /// ADD
+  describe('verifica /POST products', async () => {
+    describe('Em caso de sucesso', () => {
+      before(() => {
+        request.body = newSale;
+
+        response.status = sinon.stub().returns(response);
+        response.json = sinon.stub().returns();
+
+        sinon.stub(salesService, 'add').resolves(responseSale);
+      })
+
+      after(() => {
+        salesService.add.restore();
+      })
+
+      it('retorna um objeto com o status 201', async () => {
+        await salesController.add(request, response);
+
+        expect(response.status.calledWith(201)).to.be.equal(true);
+        expect(response.json.calledWith(responseSale)).to.be.equal(true);
+      })
+    });
+  });
+  /// UPDATE
+  describe('verifica /PUT products', async () => {
+    describe('Em caso de sucesso', () => {
+      before(() => {
+        request.params = 1
+        request.body = newSale;
+
+        response.status = sinon.stub().returns(response);
+        response.json = sinon.stub().returns();
+        
+        sinon.stub(salesService, 'update').resolves(saleUpdated);
+      })
+
+      after(() => {
+        salesService.update.restore();
+      })
+
+      it('retorna um objeto com o status 200', async () => {
+        await salesController.update(request, response);
+
+        expect(response.status.calledWith(200)).to.be.equal(true);
+        expect(response.json.calledWith(saleUpdated)).to.be.equal(true);
+      })
+    });
+    describe('Em caso de falha', () => {
+      before(() => {
+        request.params = 999
+        request.body = newSale;
+
+        response.status = sinon.stub().returns(response);
+        response.json = sinon.stub().returns();
+
+        sinon.stub(salesService, 'update').resolves(undefined);
+      })
+
+      after(() => {
+        salesService.update.restore();
+      })
+
+      it('retorna um messagem com o status 409', async () => {
+        await salesController.update(request, response);
+
+        expect(response.status.calledWith(404)).to.be.equal(true);
+        expect(response.json.calledWith({ message: 'Sale not found' })).to.be.equal(true);
+      })
     });
   });
 })
