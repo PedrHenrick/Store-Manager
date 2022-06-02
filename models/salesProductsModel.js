@@ -20,7 +20,13 @@ const update = async (id, { productId, quantity }) => {
   };
 };
 
+const deleteProduct = async (id) => {
+  const query = 'DELETE FROM sales_products WHERE sale_id = ?;';
+  return connection.execute(query, [id]);
+};
+
 module.exports = {
   add,
   update,
+  deleteProduct,
 };
