@@ -42,8 +42,22 @@ const update = async (id, sales) => {
   };
 };
 
+const deleteProduct = async (id) => {
+  const [rows] = await salesModel.getAllSale();
+
+  const verify = rows.find((row) => row.id === +id);
+
+  if (!verify) return undefined;
+
+  await salesModel.deleteProduct(id);
+  await salesProductsModel.deleteProduct(id);
+
+  return true;
+}; 
+
 module.exports = {
   get,
   add,
   update,
+  deleteProduct,
 };
