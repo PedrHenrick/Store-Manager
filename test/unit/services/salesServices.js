@@ -101,7 +101,7 @@ describe('Testando service da rota sales', () => {
         expect(response).to.be.property('itemsSold');
       });
     });
-  });
+  }); 
   describe('Testando função update', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       before(async () => {
