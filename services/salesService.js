@@ -34,6 +34,8 @@ const update = async (id, sales) => {
   const verify = rows.find((row) => row.id === +id);
   
   if (!verify) return undefined;
+
+  await actualizeProductsQuantity(id, sales);
   
   const editedSales = await Promise.all(sales
   .map((sale) => salesProductsModel.update(id, sale)));
