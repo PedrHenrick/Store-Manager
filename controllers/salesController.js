@@ -19,7 +19,7 @@ const add = async (req, res) => {
   const newSale = req.body;
 
   const sale = await salesService.add(newSale);
-
+    
   return res.status(201).json(sale);
 };
 
