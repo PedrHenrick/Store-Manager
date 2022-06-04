@@ -84,9 +84,7 @@ const actualizeProductsQuantity = async (id, sales) => {
   } else if (id && sales) {
     result = await updateItem(id, sales);
     return result;
-  } else {
-    result = await deleteItem(id);
-  }
+  } else result = await deleteItem(id);
 
   return result;
 }; 
