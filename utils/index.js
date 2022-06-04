@@ -9,6 +9,25 @@ const serializeSale = (sale) => ({
   quantity: sale.quantity,
 });
 
+const deleteItem = async (id) => {
+  const [products] = await productModel.getAll();
+  const sales = await salesProductsModel.getAll();
+
+  const value = await Promise.all(sales.filter((sale) => sale.sale_id === +id)
+    .map((item) => {
+      const productFound = products.find((product) => product.id === item.product_id);
+
+      const newValueProduct = { 
+        name: productFound.name,
+        quantity: productFound.quantity + item.quantity,
+      };
+    
+      return productService.update(item.product_id, newValueProduct);
+    }));
+    
+  return value;
+};
+
 const addItem = async (sales) => {
   const [products] = await productModel.getAll();
 
@@ -36,6 +55,8 @@ const actualizeProductsQuantity = async (id, sales) => {
   
   if (!id && sales) {
     result = await addItem(sales);
+  } else {
+    result = await deleteItem(id);
   }
 
   return result;
