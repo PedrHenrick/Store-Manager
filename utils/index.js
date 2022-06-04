@@ -28,6 +28,32 @@ const deleteItem = async (id) => {
   return value;
 };
 
+const updateItem = async (id, saleUpdate) => {
+  const [products] = await productModel.getAll();
+  const sales = await salesProductsModel.getAll();
+
+  const values = await Promise.all(saleUpdate.map((sale) => {
+    const productFound = products.find((product) => product.id === sale.productId);
+    
+    const value = sales.filter((item) => item.sale_id === +id)
+      .filter((resultSale) => resultSale.product_id === sale.productId)[0];
+
+    const newValueProduct = { 
+      name: productFound.name,
+      quantity: productFound.quantity + (value.quantity - sale.quantity),
+    };
+
+    if (newValueProduct.quantity < 0) {
+      const object = { status: 422, message: 'Such amount is not permitted to sell' }; 
+      throw object;
+    }
+
+    return productService.update(value.product_id, newValueProduct);
+  }));
+
+  return values;
+};
+
 const addItem = async (sales) => {
   const [products] = await productModel.getAll();
 
@@ -55,6 +81,9 @@ const actualizeProductsQuantity = async (id, sales) => {
   
   if (!id && sales) {
     result = await addItem(sales);
+  } else if (id && sales) {
+    result = await updateItem(id, sales);
+    return result;
   } else {
     result = await deleteItem(id);
   }
