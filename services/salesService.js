@@ -50,7 +50,9 @@ const deleteProduct = async (id) => {
   const verify = rows.find((row) => row.id === +id);
   
   if (!verify) return undefined;
-    
+  
+  await actualizeProductsQuantity(id);
+  
   await salesModel.deleteProduct(id);
   await salesProductsModel.deleteProduct(id);
 
