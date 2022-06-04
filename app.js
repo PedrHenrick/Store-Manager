@@ -1,3 +1,4 @@
+require('express-async-errors');
 const express = require('express');
 
 const app = express();
@@ -9,9 +10,7 @@ app.get('/', (_request, response) => {
 
 app.use(require('./routes/router'));
 
-app.use((err, _req, res, _next) => {
-  res.status(err.status || 500).json({ message: err.message || 'Erro interno' });
-});
+app.use(require('./middlewares/middlewareError'));
 
 // não remova essa exportação, é para o avaliador funcionar
 // você pode registrar suas rotas normalmente, como o exemplo acima
