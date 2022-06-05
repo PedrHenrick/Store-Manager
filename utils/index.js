@@ -13,7 +13,7 @@ const serializeSale = (sale) => ({
 
 const deleteItem = async (id) => {
   const [products] = await productModel.getAll();
-  const sales = await salesProductsModel.getAll();
+  const [sales] = await salesProductsModel.getAll();
 
   const value = await sales.filter((sale) => sale.sale_id === +id)
     .map((item) => {
@@ -30,7 +30,7 @@ const deleteItem = async (id) => {
 
 const updateItem = async (id, saleUpdate) => {
   const [products] = await productModel.getAll();
-  const sales = await salesProductsModel.getAll();
+  const [sales] = await salesProductsModel.getAll();
 
   const values = await saleUpdate.map((sale) => {
     const productFound = products.find((product) => product.id === sale.productId);
