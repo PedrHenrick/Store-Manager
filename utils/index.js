@@ -1,4 +1,6 @@
 const productModel = require('../models/productModel');
+
+const objectErrorByQuantity = { status: 422, message: 'Such amount is not permitted to sell' }; 
 const productService = require('../services/productService');
 const salesProductsModel = require('../models/salesProductsModel');
 
@@ -21,10 +23,8 @@ const deleteItem = async (id) => {
         name: productFound.name,
         quantity: productFound.quantity + item.quantity,
       };
-    
-      return productService.update(item.product_id, newValueProduct);
+      return productService.update({ id: item.product_id }, newValueProduct);
     });
-    
   return value;
 };
 
@@ -34,7 +34,6 @@ const updateItem = async (id, saleUpdate) => {
 
   const values = await saleUpdate.map((sale) => {
     const productFound = products.find((product) => product.id === sale.productId);
-    
     const value = sales.filter((item) => item.sale_id === +id)
       .filter((resultSale) => resultSale.product_id === sale.productId)[0];
 
@@ -43,36 +42,26 @@ const updateItem = async (id, saleUpdate) => {
       quantity: productFound.quantity + (value.quantity - sale.quantity),
     };
 
-    if (newValueProduct.quantity < 0) {
-      const object = { status: 422, message: 'Such amount is not permitted to sell' }; 
-      throw object;
-    }
-
-    return productService.update(value.product_id, newValueProduct);
+    if (newValueProduct.quantity < 0) throw objectErrorByQuantity;
+    return productService.update({ id: value.product_id }, newValueProduct);
   });
-
   return values;
 };
 
 const addItem = async (sales) => {
   const [products] = await productModel.getAll();
-
+  
   const value = await sales.map((sale) => {
     const productFound = products.find((product) => product.id === sale.productId);
-
-    if (!productFound || (productFound.quantity - sale.quantity) < 0) {
-      const object = { status: 422, message: 'Such amount is not permitted to sell' }; 
-      throw object;
-    }
-
+    
+    if (!productFound || (productFound.quantity - sale.quantity) < 0) throw objectErrorByQuantity;
+    
     const newValueProduct = { 
       name: productFound.name,
       quantity: productFound.quantity - sale.quantity,
     };
-
-    return productService.update(sale.productId, newValueProduct);
+    return productService.update({ id: sale.productId }, newValueProduct);
   });
-
   return value;
 };
 
