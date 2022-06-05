@@ -1,6 +1,6 @@
 const salesModel = require('../models/salesModel');
 const salesProductsModel = require('../models/salesProductsModel');
-const { serializeSale, actualizeProductsQuantity } = require('../utils');
+const actualizeItems = require('../utils');
 
 const get = async (id = null) => {
   if (id) {
@@ -10,12 +10,12 @@ const get = async (id = null) => {
   }
   
   const [rows] = await salesModel.getAll();
-  const sales = rows.map((row) => serializeSale(row));
+  const sales = rows.map((row) => actualizeItems.serializeSale(row));
   return sales;
 };
 
 const add = async (sales) => {
-  await actualizeProductsQuantity(undefined, sales);
+  await actualizeItems.addItem(sales);
 
   const { id } = await salesModel.add();
 
@@ -35,7 +35,7 @@ const update = async (id, sales) => {
   
   if (!verify) return undefined;
 
-  await actualizeProductsQuantity(id, sales);
+  await actualizeItems.updateItem(id, sales);
   
   const editedSales = await Promise.all(sales
   .map((sale) => salesProductsModel.update(id, sale)));
@@ -53,7 +53,7 @@ const deleteProduct = async (id) => {
   
   if (!verify) return undefined;
   
-  await actualizeProductsQuantity(id);
+  await actualizeItems.deleteItem(id);
   
   await salesModel.deleteProduct(id);
   await salesProductsModel.deleteProduct(id);
