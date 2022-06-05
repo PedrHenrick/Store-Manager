@@ -13,7 +13,7 @@ const deleteItem = async (id) => {
   const [products] = await productModel.getAll();
   const sales = await salesProductsModel.getAll();
 
-  const value = await Promise.all(sales.filter((sale) => sale.sale_id === +id)
+  const value = await sales.filter((sale) => sale.sale_id === +id)
     .map((item) => {
       const productFound = products.find((product) => product.id === item.product_id);
 
@@ -23,7 +23,7 @@ const deleteItem = async (id) => {
       };
     
       return productService.update(item.product_id, newValueProduct);
-    }));
+    });
     
   return value;
 };
@@ -32,7 +32,7 @@ const updateItem = async (id, saleUpdate) => {
   const [products] = await productModel.getAll();
   const sales = await salesProductsModel.getAll();
 
-  const values = await Promise.all(saleUpdate.map((sale) => {
+  const values = await saleUpdate.map((sale) => {
     const productFound = products.find((product) => product.id === sale.productId);
     
     const value = sales.filter((item) => item.sale_id === +id)
@@ -49,7 +49,7 @@ const updateItem = async (id, saleUpdate) => {
     }
 
     return productService.update(value.product_id, newValueProduct);
-  }));
+  });
 
   return values;
 };
@@ -57,7 +57,7 @@ const updateItem = async (id, saleUpdate) => {
 const addItem = async (sales) => {
   const [products] = await productModel.getAll();
 
-  const value = await Promise.all(sales.map((sale) => {
+  const value = await sales.map((sale) => {
     const productFound = products.find((product) => product.id === sale.productId);
 
     if (!productFound || (productFound.quantity - sale.quantity) < 0) {
@@ -71,25 +71,14 @@ const addItem = async (sales) => {
     };
 
     return productService.update(sale.productId, newValueProduct);
-  }));
+  });
 
   return value;
 };
 
-const actualizeProductsQuantity = async (id, sales) => {
-  let result;
-  
-  if (!id && sales) {
-    result = await addItem(sales);
-  } else if (id && sales) {
-    result = await updateItem(id, sales);
-    return result;
-  } else result = await deleteItem(id);
-
-  return result;
-}; 
-
 module.exports = {
   serializeSale,
-  actualizeProductsQuantity,
+  addItem,
+  updateItem,
+  deleteItem,
 };
