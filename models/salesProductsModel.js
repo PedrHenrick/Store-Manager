@@ -1,39 +1,20 @@
 const connection = require('../database/connection');
 
-const getAll = async () => {
-  const query = 'SELECT * FROM sales_products';
-  const [sales] = await connection.execute(query);
-  return sales;
-};
+const getAll = () => connection.execute('SELECT * FROM sales_products');
 
 const add = async (id, { productId, quantity }) => {
-  const query = 'INSERT INTO sales_products(sale_id, product_id, quantity) VALUES(?, ?, ?);';
-  await connection.execute(query, [id, productId, quantity]);
-  
-  return {
-    productId,
-    quantity,
-  };
+  await connection.execute(`INSERT INTO sales_products(sale_id, product_id, quantity) 
+  VALUES(?, ?, ?)`, [id, productId, quantity]);
+  return { productId, quantity };
 };
 
 const update = async (id, { productId, quantity }) => {
-  const query = 'UPDATE sales_products SET quantity = ? WHERE sale_id = ? AND product_id = ?;';
-  await connection.execute(query, [quantity, id, productId]);
-  
-  return {
-    productId,
-    quantity,
-  };
+  await connection.execute(`UPDATE sales_products SET quantity = ?
+  WHERE sale_id = ? AND product_id = ?;`, [quantity, id, productId]);
+  return { productId, quantity };
 };
 
-const deleteProduct = async (id) => {
-  const query = 'DELETE FROM sales_products WHERE sale_id = ?;';
-  return connection.execute(query, [id]);
-};
+const deleteProduct = (id) => connection.execute(`DELETE FROM sales_products 
+WHERE sale_id = ?`, [id]);
 
-module.exports = {
-  getAll,
-  add,
-  update,
-  deleteProduct,
-};
+module.exports = { getAll, add, update, deleteProduct };
