@@ -4,8 +4,6 @@ const { validateProduct, validateLengthProduct } = require('../middlewares/valid
 
 const productRouter = express.Router();
 
-productRouter.use(express.json());
-
 productRouter.get('/', productController.getAll);
 productRouter.get('/:id', productController.getById);
 productRouter.post('/', validateProduct, validateLengthProduct, productController.add);

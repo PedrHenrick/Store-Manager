@@ -4,8 +4,6 @@ const { validateSale, validateLengthSale } = require('../middlewares/validateSal
 
 const saleRouter = express.Router();
 
-saleRouter.use(express.json());
-
 saleRouter.get('/', salesController.getAll);
 saleRouter.get('/:id', salesController.getById);
 saleRouter.post('/', validateSale, validateLengthSale, salesController.add);
