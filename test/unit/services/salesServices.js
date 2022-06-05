@@ -4,6 +4,7 @@ const sinon = require('sinon');
 const salesModel = require('../../../models/salesModel');
 const salesProductsModel = require('../../../models/salesProductsModel');
 const salesService = require('../../../services/salesService');
+const actualizeItems = require('../../../utils');
 const { salesAll, saleId, newSale, responseSale, saleUpdated, allSales } = require('../mocks');
 
 describe('Testando service da rota sales', () => {
@@ -79,10 +80,11 @@ describe('Testando service da rota sales', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       const id = { id: 1 };
       before(async () => {
+        sinon.stub(actualizeItems, 'addItem').resolves();
         sinon.stub(salesModel, 'add').resolves(id);
         sinon.stub(salesProductsModel, 'add').resolves(responseSale);
       });
-    
+
       after(async () => {
         salesModel.add.restore();
         salesProductsModel.add.restore();
@@ -105,6 +107,7 @@ describe('Testando service da rota sales', () => {
   describe('Testando função update', () => {
     describe('Se ao ser chamado com sucesso retorna um objeto', () => {
       before(async () => {
+        sinon.stub(actualizeItems, 'updateItem').resolves()
         sinon.stub(salesModel, 'getAllSale').resolves([allSales]);
         sinon.stub(salesProductsModel, 'update').resolves(saleUpdated);
       });
