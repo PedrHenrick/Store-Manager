@@ -38,7 +38,7 @@ const update = async (id, sales) => {
   await actualizeItems.updateItem(id, sales);
   
   const editedSales = await Promise.all(sales
-  .map((sale) => salesProductsModel.update(id, sale)));
+    .map((sale) => salesProductsModel.update(id, sale)));
   
   return {
     saleId: id,
