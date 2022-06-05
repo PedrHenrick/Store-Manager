@@ -1,44 +1,27 @@
 const connection = require('../database/connection');
 
-const getAll = () => {
-  const query = 'SELECT * FROM products';
-  return connection.execute(query);
-};
+const getAll = () => connection.execute('SELECT * FROM products');
+
+const getById = (id) => connection.execute('SELECT * FROM products WHERE id = ?', [+id]);
 
 const add = async ({ name, quantity }) => {
-  const query = `INSERT INTO products (name, quantity)
-  VALUES (?, ?)`;
-  const [row] = await connection.execute(query, [name, quantity]);
+  const [row] = await connection.execute(`INSERT INTO products (name, quantity)
+  VALUES (?, ?)`, [name, quantity]);
 
-  return {
-    id: row.insertId,
-    name,
-    quantity,
-  };
+  return { id: row.insertId, name, quantity };
 };
 
 const update = async (id, { name, quantity }) => {
-  const query = 'UPDATE products SET name = ?, quantity = ? WHERE id = ?';
-  
-  await connection.execute(query, [name, quantity, id]);
-  return {
-    id,
-    name,
-    quantity,
-  };
+  await connection.execute(`UPDATE products 
+  SET name = ?, quantity = ? WHERE id = ?`, [name, quantity, id]);
+
+  return { id, name, quantity };
 };
 
 const deleteProduct = async (id) => {
-  const query = 'DELETE FROM products WHERE id = ?';
-  await connection.execute(query, [id]);
-  return {
-    id,
-  };
+  await connection.execute('DELETE FROM products WHERE id = ?', [id]);
+  
+  return { id };
 };
 
-module.exports = {
-  getAll,
-  add,
-  update,
-  deleteProduct,
-};
+module.exports = { getAll, getById, add, update, deleteProduct };
