@@ -1,13 +1,14 @@
 const express = require('express/');
 const productController = require('../controllers/productController');
-const { validateProduct, validateLengthProduct } = require('../middlewares/validateProduct');
+const validateSchema = require('../middlewares/middlewareValidade');
+const { schemaProduct } = require('../middlewares/schema');
 
 const productRouter = express.Router();
 
 productRouter.get('/', productController.getAll);
 productRouter.get('/:id', productController.getById);
-productRouter.post('/', validateProduct, validateLengthProduct, productController.add);
-productRouter.put('/:id', validateProduct, validateLengthProduct, productController.update);
+productRouter.post('/', validateSchema(schemaProduct), productController.add);
+productRouter.put('/:id', validateSchema(schemaProduct), productController.update);
 productRouter.delete('/:id', productController.deleteProduct);
 
 module.exports = productRouter;
