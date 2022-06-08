@@ -3,7 +3,7 @@ const sinon = require('sinon');
 
 const salesController = require('../../../controllers/salesController')
 const salesService = require('../../../services/salesService')
-const { salesAll, saleId, newSale, responseSale, saleUpdated } = require('../mocks');
+const { salesAll, saleId, newSale, responseSale, saleUpdated } = require('../mocksSale');
 
 describe('Testando rotas /sales', () => {
   const request = {};
@@ -13,23 +13,17 @@ describe('Testando rotas /sales', () => {
     before(() => {
       response.status = sinon.stub().returns(response);
       response.json = sinon.stub().returns();
-
-      sinon.stub(salesService, 'get').resolves(salesAll);
+      sinon.stub(salesService, 'getAll').resolves([salesAll]);
     })
-
-    after(() => {
-        salesService.get.restore();
-    });
+    after(() => salesService.getAll.restore());
 
     it('Testando se em caso de sucesso retorna um status 200', async () => {
         await salesController.getAll(request, response);
-
         expect(response.status.calledWith(200)).to.be.equal(true);
     });
 
     it('Testando se em caso de sucesso retorna um array', async () => {
       await salesController.getAll(request, response);
-
       expect(response.json.calledWith(sinon.match.array)).to.be.equal(true);
     });
   });
@@ -38,122 +32,74 @@ describe('Testando rotas /sales', () => {
     describe('Em caso de sucesso', async () => {
       before(() => {
         request.params = { id: 1 }
-
         response.status = sinon.stub().returns(response);
         response.json = sinon.stub().returns();
-  
-        sinon.stub(salesService, 'get').resolves(saleId);
+        sinon.stub(salesService, 'getById').resolves(saleId);
       })
-  
-      after(() => {
-        salesService.get.restore();
-      });
+      after(() => salesService.getById.restore());
   
       it('Testando se em caso de sucesso retorna um status 200', async () => {
           await salesController.getById(request, response);
-  
           expect(response.status.calledWith(200)).to.be.equal(true);
       });
   
       it('Testando se em caso de sucesso retorna um array', async () => {
         await salesController.getById(request, response);
-  
         expect(response.json.calledWith(sinon.match.array)).to.be.equal(true);
       });
     });
-
-    describe('Em caso de falha', async () => {    
-      before(() => {  
-        request.params = { id: 9999 }
-
-        response.status = sinon.stub().returns(response);
-        response.json = sinon.stub().returns();
-  
-        sinon.stub(salesService, 'get').resolves(undefined);
-      })
-  
-      after(() => {
-        salesService.get.restore();
-      });
-  
-      it('Testando se em caso de sucesso retorna um status 404', async () => {
-          await salesController.getById(request, response);
-          expect(response.status.calledWith(404)).to.be.equal(true);
-      });
-  
-      it('Testando se em caso de sucesso retorna um array', async () => {
-        await salesController.getById(request, response);
-  
-        expect(response.json.calledWith({ message: "Sale not found" })).to.be.equal(true);
-      });
-    });
   });
-  describe('verifica /POST products', async () => {
+  describe('verifica /POST sale', async () => {
     describe('Em caso de sucesso', () => {
       before(() => {
         request.body = newSale;
-
         response.status = sinon.stub().returns(response);
         response.json = sinon.stub().returns();
-
         sinon.stub(salesService, 'add').resolves(responseSale);
       })
-
-      after(() => {
-        salesService.add.restore();
-      })
+      after(() => salesService.add.restore())
 
       it('retorna um objeto com o status 201', async () => {
         await salesController.add(request, response);
-
         expect(response.status.calledWith(201)).to.be.equal(true);
         expect(response.json.calledWith(responseSale)).to.be.equal(true);
       })
     });
   });
-  describe('verifica /PUT products', async () => {
+
+  describe('verifica /PUT sale', async () => {
     describe('Em caso de sucesso', () => {
       before(() => {
         request.params = 1
         request.body = newSale;
-
         response.status = sinon.stub().returns(response);
-        response.json = sinon.stub().returns();
-        
+        response.json = sinon.stub().returns();     
         sinon.stub(salesService, 'update').resolves(saleUpdated);
       })
-
-      after(() => {
-        salesService.update.restore();
-      })
+      after(() => salesService.update.restore())
 
       it('retorna um objeto com o status 200', async () => {
         await salesController.update(request, response);
-
         expect(response.status.calledWith(200)).to.be.equal(true);
         expect(response.json.calledWith(saleUpdated)).to.be.equal(true);
       })
     });
-    describe('Em caso de falha', () => {
+  });
+
+  describe('verifica /DELETE sale', async () => {
+    describe('Em caso de sucesso', () => {
       before(() => {
-        request.params = 999
-        request.body = newSale;
-
+        request.params = 1
         response.status = sinon.stub().returns(response);
-        response.json = sinon.stub().returns();
-
-        sinon.stub(salesService, 'update').resolves(undefined);
+        response.json = sinon.stub().returns();     
+        sinon.stub(salesService, 'deleteProduct').resolves();
       })
+      after(() => salesService.deleteProduct.restore())
 
-      after(() => {
-        salesService.update.restore();
-      })
-
-      it('retorna um messagem com o status 409', async () => {
-        await salesController.update(request, response);
-
-        expect(response.status.calledWith(404)).to.be.equal(true);
-        expect(response.json.calledWith({ message: 'Sale not found' })).to.be.equal(true);
+      it('retorna um objeto com o status 204', async () => {
+        await salesController.deleteProduct(request, response);
+        expect(response.status.calledWith(204)).to.be.equal(true);
+        expect(response.json.calledWith()).to.be.equal(true);
       })
     });
   });
