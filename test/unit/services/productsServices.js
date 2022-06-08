@@ -3,200 +3,242 @@ const sinon = require('sinon');
 
 const productModel = require('../../../models/productModel');
 const productService = require('../../../services/productService');
-const { productsAll, productId, newProduct, product, existingProduct } = require('../mocks');
+const { productsAll, productId, newProduct, product, existingProduct } = require('../mocksProduct');
 
 describe('Testando service da rota product', () => {
-  describe('Testando get-All', () => {
-    before(async () => { 
-      sinon.stub(productModel, 'getAll').resolves([productsAll]);
-    });
-  
-    after(async () => {
-      productModel.getAll.restore();
-    });
+  describe('Testando getAll', () => {
+    before(async () => sinon.stub(productModel, 'getAll')
+      .resolves(productsAll));
+    after(async () => productModel.getAll.restore());
 
-    it('Testando se em caso de sucesso recebe um array de objetos', async () => {
-      const response = await productService.get();
-
+    it('Se em caso de sucesso recebe um array de objetos', async () => {
+      const response = await productService.getAll();
       expect(response).to.be.a('array')
       expect(response[0]).to.be.a('object')
     })
 
     it('Se tem as propriedades id, name, quantity', async () => {
-      const response = await productService.get();
+      const response = await productService.getAll();
 
       expect(response[0]).to.be.property('id')
       expect(response[0]).to.be.property('name')
       expect(response[0]).to.be.property('quantity')
     })
-    })
+  })
 
-  describe('Testando get-Id', () => {
+  describe('Testando getById', () => {
     describe('Em caso de sucesso', () => {
-      before(async () => {
-        sinon.stub(productModel, 'getAll').resolves([productId]);
-      });
-    
-      after(async () => {
-        productModel.getAll.restore();
-      });
+      before(async () => sinon.stub(productModel, 'getById').resolves([productId]));
+      after(async () => productModel.getById.restore());
   
       it('Testando se em caso de sucesso recebe um objeto', async () => {
-        const id = 1;
-        const response = await productService.get(id);
-
+        const response = await productService.getById(1);
         expect(response).to.be.a('object');
       });
   
       it('Se tem as propriedades id, name, quantity', async () => {
-        const id = 1;
-        const response = await productService.get(id);
-
+        const response = await productService.getById(1);
         expect(response).to.be.property('id');
         expect(response).to.be.property('name');
         expect(response).to.be.property('quantity');
       });
     })
 
-    describe('Em caso de falha', () => {
-      before(async () => {
-        sinon.stub(productModel, 'getAll').resolves([[]]);
-      });
-    
-      after(async () => {
-        productModel.getAll.restore();
-      });
-  
-      it('Se ao receber um array vazio retorna "undefined"', async () => {
-        const id = 5;
-        const response = await productService.get(id);
+    describe('Em caso de erro', () => {
+      before(async () => sinon.stub(productModel, 'getById').resolves([[undefined]]));
+      after(async () => productModel.getById.restore());
 
-        expect(response).to.be.a('undefined')
-      })
+      it('Testando se em caso de falha é lançado uma exceção com um objeto', async () => {
+        try {
+          await productService.getById({ id: 999 })
+        } catch (err) {
+          expect(err).to.be.a('object');
+        }
+      });
+
+      it('Testando se o objeto da exceção tem as propriedades status e message', async () => {
+        try {
+          await productService.getById({ id: 999 })
+        } catch (err) {
+          expect(err).to.be.property('status');
+          expect(err).to.be.property('message');
+        }
+      });
+
+      it('Testando se a propriedade status é 404 e message é "Product not found"', async () => {
+        try {
+          await productService.getById({ id: 999 })
+        } catch (err) {
+          expect(err.status).to.be.equal(404);
+          expect(err.message).to.be.equal('Product not found');
+        }
+      });
     })
   })
   
   describe('Testando função add', () => {
-    describe('Se ao ser chamado com sucesso retorna um objeto', () => {
+    describe('Em caso de sucesso', () => {
       before(async () => {
         sinon.stub(productModel, 'getAll').resolves([productsAll]);
         sinon.stub(productModel, 'add').resolves(product);
       });
-    
       after(async () => {
-        productModel.add.restore();
         productModel.getAll.restore();
+        productModel.add.restore();
       });
-  
+      
       it('Testando se em caso de sucesso recebe um objeto', async () => {
         const response = await productService.add(newProduct);
-
         expect(response).to.be.a('object');
       });
   
       it('Se tem as propriedades id, name, quantity', async () => {
         const response = await productService.add(newProduct);
-
         expect(response).to.be.property('id');
         expect(response).to.be.property('name');
         expect(response).to.be.property('quantity');
       });
-    });
-    describe('Se ao ser chamado com erro retorna um undefined', () => {
-      before(async () => {
-        sinon.stub(productModel, 'getAll').resolves([productsAll]);
-      });
-    
-      after(async () => {
-        productModel.getAll.restore();
-      });
-  
-      it('Testando se em caso de sucesso recebe um objeto', async () => {
-        const response = await productService.add(existingProduct);
+    })
 
-        expect(response).to.be.a('undefined');
+    describe('Em caso de erro', () => {
+      before(async () => sinon.stub(productModel, 'getAll').resolves([[existingProduct]]));
+      after(async () => productModel.getAll.restore());
+
+      it('Testando se em caso de falha é lançado uma exceção com um objeto', async () => {
+        try {
+          await productService.add(existingProduct)
+        } catch (err) {
+          expect(err).to.be.a('object');
+        }
+      });
+
+      it('Testando se o objeto da exceção tem as propriedades status e message', async () => {
+        try {
+          await productService.add(existingProduct)
+        } catch (err) {
+          expect(err).to.be.property('status');
+          expect(err).to.be.property('message');
+        }
+      });
+
+      it('Testando se a propriedade status é 409 e message é "Product already exists"', async () => {
+        try {
+          await productService.add(existingProduct)
+        } catch (err) {
+          expect(err.status).to.be.equal(409);
+          expect(err.message).to.be.equal('Product already exists');
+        }
       });
     })
   });
+  
   describe('Testando função update', () => {
-    describe('Se ao ser chamado com sucesso retorna um objeto', () => {
+    describe('Em caso de sucesso', () => {
       before(async () => {
-        sinon.stub(productModel, 'getAll').resolves([productsAll]);
+        sinon.stub(productModel, 'getById').resolves([productId]);
         sinon.stub(productModel, 'update').resolves({ id: 1, name: newProduct.name, quantity: newProduct.quantity });
       });
-    
       after(async () => {
-        productModel.getAll.restore();
+        productModel.getById.restore();
         productModel.update.restore();
       });
-  
-      it('Testando se em caso de sucesso recebe um objeto', async () => {
-        const response = await productService.update(1, newProduct);
 
+      it('Se ao ser chamado com sucesso retorna um objeto', async () => {
+        const response = await productService.update({ id: 1 }, newProduct);
         expect(response).to.be.a('object');
       });
-  
-      it('Se tem as propriedades id, name, quantity', async () => {
-        const response = await productService.update(1, newProduct);
 
+      it('Se tem as propriedades id, name, quantity', async () => {
+        const response = await productService.update({ id: 1 }, newProduct);
         expect(response).to.be.property('id');
         expect(response).to.be.property('name');
         expect(response).to.be.property('quantity');
       });
-    });
-    describe('Se ao ser chamado com erro retorna um undefined', () => {
-      before(async () => {
-        sinon.stub(productModel, 'getAll').resolves([productsAll]);
+    })
+
+    describe('Em caso de erro', () => {
+      before(async () => sinon.stub(productModel, 'getById').resolves([[undefined]]));
+      after(async () => productModel.getById.restore());
+
+      it('Testando se em caso de falha é lançado uma exceção com um objeto', async () => {
+        try {
+          await productService.update({ id: 999 })
+        } catch (err) {
+          expect(err).to.be.a('object');
+        }
       });
-      
-      after(async () => {
-        productModel.getAll.restore();
+
+      it('Testando se o objeto da exceção tem as propriedades status e message', async () => {
+        try {
+          await productService.update({ id: 999 }, newProduct)
+        } catch (err) {
+          expect(err).to.be.property('status');
+          expect(err).to.be.property('message');
+        }
       });
-      
-      it('Testando se em caso de sucesso recebe um objeto', async () => {
-        const response = await productService.update(newProduct);
-        
-        expect(response).to.be.a('undefined');
+
+      it('Testando se a propriedade status é 404 e message é "Product not found"', async () => {
+        try {
+          await productService.update({ id: 999 }, newProduct)
+        } catch (err) {
+          expect(err.status).to.be.equal(404);
+          expect(err.message).to.be.equal('Product not found');
+        }
       });
     })
   });
+
+
   describe('Testando função delete', () => {
-    describe('Se ao ser chamado com sucesso retorna um objeto', () => {
+    describe('Em caso de sucesso', () => {
       before(async () => {
-        sinon.stub(productModel, 'getAll').resolves([productsAll]);
+        sinon.stub(productModel, 'getById').resolves([productId]);
         sinon.stub(productModel, 'deleteProduct').resolves({ id: 1 });
       });
-    
       after(async () => {
-        productModel.getAll.restore();
+        productModel.getById.restore();
         productModel.deleteProduct.restore();
       });
-  
-      it('Testando se em caso de sucesso recebe um objeto', async () => {
-        const response = await productService.deleteProduct(1);
-
+      
+      it('Se ao ser chamado com sucesso retorna um objeto', async () => {
+        const response = await productService.deleteProduct({ id: 1 });
         expect(response).to.be.a('object');
       });
-  
-      it('Se tem a propriedade id', async () => {
-        const response = await productService.deleteProduct(1);
 
+      it('Se tem a propriedade id', async () => {
+        const response = await productService.deleteProduct({ id: 1 });
         expect(response).to.be.property('id');
       });
-    });
-    describe('Se ao ser chamado com erro retorna um undefined', () => {
-      before(async () => {
-        sinon.stub(productModel, 'getAll').resolves([productsAll]);
+    })
+
+    describe('Em caso de erro', () => {
+      before(async () => sinon.stub(productModel, 'getById').resolves([[undefined]]));
+      after(async () => productModel.getById.restore());
+
+      it('Testando se em caso de falha é lançado uma exceção com um objeto', async () => {
+        try {
+          await productService.deleteProduct({ id: 999 })
+        } catch (err) {
+          expect(err).to.be.a('object');
+        }
       });
-      
-      after(async () => {
-        productModel.getAll.restore();
+
+      it('Testando se o objeto da exceção tem as propriedades status e message', async () => {
+        try {
+          await productService.deleteProduct({ id: 999 })
+        } catch (err) {
+          expect(err).to.be.property('status');
+          expect(err).to.be.property('message');
+        }
       });
-      
-      it('Testando se em caso de sucesso recebe um objeto', async () => {
-        const response = await productService.deleteProduct(999);
-        
-        expect(response).to.be.a('undefined');
+
+      it('Testando se a propriedade status é 404 e message é "Product not found"', async () => {
+        try {
+          await productService.deleteProduct({ id: 999 })
+        } catch (err) {
+          expect(err.status).to.be.equal(404);
+          expect(err.message).to.be.equal('Product not found');
+        }
       });
     })
   });
