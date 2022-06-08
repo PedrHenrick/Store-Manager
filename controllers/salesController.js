@@ -2,7 +2,6 @@ const salesService = require('../services/salesService');
 
 const getAll = async (_req, res) => {
   const [sales] = await salesService.getAll();
-  console.log('sales=> ', sales);
   return res.status(200).json(sales);
 };
 
@@ -23,7 +22,7 @@ const update = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   await salesService.deleteProduct(req.params);
-  return res.status(204).end();
+  return res.status(204).json();
 };
 
 module.exports = { getAll, getById, add, update, deleteProduct };
