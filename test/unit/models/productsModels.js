@@ -115,4 +115,4 @@ describe('Testando model da rota product', () => {
       expect(response).to.be.property('id')
     })
   });
-})
+});

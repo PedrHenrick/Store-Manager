@@ -17,7 +17,7 @@ const salesAll = [
       "productId": 3,
       "quantity": 15
   }
-]
+];
 
 const salesProductsAll = [
   {
@@ -35,17 +35,17 @@ const salesProductsAll = [
       "productId": 3,
       "quantity": 15
   }
-]
+];
 
 const allSales = [
   { "id": 1, "date": "2022-05-31T03:55:07.000Z" },
   { "id": 2, "date": "2022-05-31T03:55:07.000Z" }
-]
+];
 
 const newSale = {
   "productId": 1,
   "quantity": 3
-}
+};
 
 const responseSale = {
   "id": 1,
@@ -55,7 +55,7 @@ const responseSale = {
       "quantity": 3
     }
   ]
-}
+};
 
 const saleId = [
   {
@@ -68,7 +68,7 @@ const saleId = [
       "productId": 2,
       "quantity": 10
   }
-]
+];
 
 const saleUpdated = {
   "saleId": 1,
@@ -78,13 +78,13 @@ const saleUpdated = {
       "quantity": 6
     }
   ]
-}
+};
 
-const saleObjectAdd = { "name": "produto", "quantity": 10 }
+const saleObjectAdd = { "name": "produto", "quantity": 10 };
 
-const saleProductsResponseAddTrue =  [{ "id": 1, "name": "produto", "quantity": 10 }]
+const saleProductsResponseAddTrue =  [{ "id": 1, "name": "produto", "quantity": 10 }];
 
-const saleResponseAddTrue = [{ "id": 1, "date": "2022-05-27T16:01:51.000Z" }]
+const saleResponseAddTrue = [{ "id": 1, "date": "2022-05-27T16:01:51.000Z" }];
 
 module.exports = {
   salesAll,
@@ -97,4 +97,4 @@ module.exports = {
   saleUpdated,
   allSales,
   salesProductsAll,
-}
+};

@@ -96,4 +96,4 @@ describe('Testando rotas /products', () => {
       expect(response.json.calledWith()).to.be.equal(true);
     })
   });
-})
+});
